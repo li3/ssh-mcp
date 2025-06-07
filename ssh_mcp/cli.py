@@ -58,7 +58,7 @@ def run_command(args: argparse.Namespace) -> int:
         executor = CommandExecutor(config_manager=config_manager)
 
         result = executor.execute_command(
-            args.connection, args.command, timeout=args.timeout
+            args.connection, args.remote_command, timeout=args.timeout
         )
 
         if result["stdout"]:
@@ -181,12 +181,10 @@ def main() -> int:
         "--name",
         help="Name of the MCP server (default: SSH-MCP Server)",
         default="SSH-MCP Server",
-    )
-
-    # Run command
+    )    # Run command
     run_parser = subparsers.add_parser("run", help="Run a command on a remote server")
     run_parser.add_argument("connection", help="Name of the connection to use")
-    run_parser.add_argument("command", help="Command to execute")
+    run_parser.add_argument("remote_command", help="Command to execute")
     run_parser.add_argument(
         "--timeout",
         help="Command timeout in seconds (default: from config)",
@@ -202,9 +200,7 @@ def main() -> int:
     # List commands command
     list_commands_parser = subparsers.add_parser(
         "list-commands", help="List allowed commands"
-    )
-
-    # Init command
+    )    # Init command
     init_parser = subparsers.add_parser("init", help="Initialize a configuration file")
     init_parser.add_argument(
         "--force", help="Overwrite existing configuration file", action="store_true"
