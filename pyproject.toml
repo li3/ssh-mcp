@@ -9,7 +9,11 @@ description = "MCP server for executing commands on remote servers via SSH"
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
-dependencies = ["mcp[cli]", "paramiko", "pyyaml"]
+dependencies = [
+    "mcp[cli]",
+    "paramiko",
+    "pyyaml",
+]
 
 [project.optional-dependencies]
 dev = ["pytest", "black", "isort", "mypy"]
