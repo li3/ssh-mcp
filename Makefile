@@ -17,7 +17,7 @@ all: lint test
 
 # Development dependencies
 install-dev:
-	uv pip install -e ".[dev]"  
+	uv pip install -e ".[dev]"
 
 # Linting and formatting
 lint: lint-black lint-isort lint-mypy
