@@ -213,9 +213,7 @@ class ConfigurationManager:
         """
         return self.config.get("defaults", {}).get(
             "max_output_size", 1048576
-        )  # Default 1MB
-
-    def get_connection_names(self) -> List[str]:
+        )  # Default 1MB    def get_connection_names(self) -> List[str]:
         """
         Get the list of connection names.
 
@@ -223,3 +221,11 @@ class ConfigurationManager:
             List of connection name strings.
         """
         return list(self.config["connections"].keys())
+
+    def reload_config(self) -> None:
+        """
+        Reload the configuration from the config file.
+        
+        This allows runtime updates to the configuration without restarting the server.
+        """
+        self.config = self._load_config()
