@@ -67,12 +67,15 @@ class CommandExecutor:
         Raises:
             CommandExecutionError: If the command is not allowed or execution fails.
         """
+        self.config_manager.reload_config()
+
         # Validate the command
         self._validate_command(command)
 
         try:
             # Get the connection
-            connection = self.connection_manager.get_connection(connection_name)
+            connection = self.connection_manager.get_connection(
+                connection_name)
 
             # Execute the command
             exit_code, stdout, stderr = connection.execute_command(
@@ -81,10 +84,12 @@ class CommandExecutor:
 
             # Truncate output if it exceeds the maximum size
             if len(stdout) > self.max_output_size:
-                stdout = stdout[: self.max_output_size] + "\n... (output truncated)"
+                stdout = stdout[: self.max_output_size] + \
+                    "\n... (output truncated)"
 
             if len(stderr) > self.max_output_size:
-                stderr = stderr[: self.max_output_size] + "\n... (output truncated)"
+                stderr = stderr[: self.max_output_size] + \
+                    "\n... (output truncated)"
 
             return {
                 "exit_code": exit_code,
@@ -146,6 +151,7 @@ class CommandExecutor:
         Returns:
             List of connection name strings.
         """
+        self.config_manager.reload_config()
         return self.config_manager.get_connection_names()
 
     def get_allowed_commands(self) -> List[str]:
@@ -155,4 +161,5 @@ class CommandExecutor:
         Returns:
             List of allowed command strings.
         """
+        self.config_manager.reload_config()
         return self.allowed_commands
