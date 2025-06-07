@@ -1,0 +1,3 @@
+"""
+SSH-MCP tests package.
+"""
