@@ -63,3 +63,17 @@ clean:
 # Install for production
 install:
 	uv pip install .
+
+# Docker targets
+.PHONY: docker-build docker-run
+
+# Build the Docker image
+docker-build:
+	docker build -t ssh-mcp .
+
+# Run the container interactively
+docker-run:
+	docker run -it --rm \
+		-v ~/.ssh:/home/app/.ssh:ro \
+		-v ~/.ssh-mcp-config.yaml:/home/app/.ssh-mcp-config.yaml:ro \
+		ssh-mcp

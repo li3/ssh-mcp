@@ -26,11 +26,6 @@ def run_server(args: argparse.Namespace) -> int:
     """
     try:
         server = SSHMCPServer(server_name=args.name, config_path=args.config)
-
-        print(f"Starting SSH-MCP server '{args.name}'...")
-        print(f"Using configuration from {args.config}")
-        print("Press Ctrl+C to stop the server")
-
         server.run()
         return 0
 
@@ -176,13 +171,15 @@ def main() -> int:
     subparsers = parser.add_subparsers(dest="command", help="Command to run")
 
     # Server command
-    server_parser = subparsers.add_parser("server", help="Run the SSH-MCP server")
+    server_parser = subparsers.add_parser(
+        "server", help="Run the SSH-MCP server")
     server_parser.add_argument(
         "--name",
         help="Name of the MCP server (default: SSH-MCP Server)",
         default="SSH-MCP Server",
     )    # Run command
-    run_parser = subparsers.add_parser("run", help="Run a command on a remote server")
+    run_parser = subparsers.add_parser(
+        "run", help="Run a command on a remote server")
     run_parser.add_argument("connection", help="Name of the connection to use")
     run_parser.add_argument("remote_command", help="Command to execute")
     run_parser.add_argument(
@@ -201,7 +198,8 @@ def main() -> int:
     list_commands_parser = subparsers.add_parser(
         "list-commands", help="List allowed commands"
     )    # Init command
-    init_parser = subparsers.add_parser("init", help="Initialize a configuration file")
+    init_parser = subparsers.add_parser(
+        "init", help="Initialize a configuration file")
     init_parser.add_argument(
         "--force", help="Overwrite existing configuration file", action="store_true"
     )

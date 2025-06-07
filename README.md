@@ -61,6 +61,20 @@ Run the MCP server:
 mcp dev ssh_mcp/server.py
 ```
 
+## Docker Usage
+
+For containerized deployment, see the comprehensive **[Docker Guide](DOCKER.md)**.
+
+Quick start:
+```bash
+# Build and run
+docker build -t ssh-mcp .
+docker run -it --rm \
+  -v ~/.ssh:/home/app/.ssh:ro \
+  -v ~/.ssh-mcp-config.yaml:/home/app/.ssh-mcp-config.yaml:ro \
+  ssh-mcp
+```
+
 ## Security Considerations
 
 - SSH-MCP implements command allowlisting to prevent arbitrary command execution
