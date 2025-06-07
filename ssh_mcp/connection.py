@@ -7,7 +7,7 @@ This module handles establishing and managing SSH connections to remote servers.
 import io
 import socket
 import time
-from typing import Dict, Optional, Tuple, Union, List, Any
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import paramiko
 
@@ -182,8 +182,7 @@ class SSHConnectionManager:
             return self.connections[connection_name]
 
         # Get connection configuration
-        connection_config = self.config_manager.get_connection_config(
-            connection_name)
+        connection_config = self.config_manager.get_connection_config(connection_name)
 
         # Create a new connection
         connection = SSHConnection(
@@ -226,4 +225,3 @@ class SSHConnectionManager:
         for connection_name in list(self.last_used.keys()):
             if current_time - self.last_used[connection_name] > max_idle_time:
                 self.close_connection(connection_name)
-

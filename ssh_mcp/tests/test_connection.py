@@ -13,7 +13,7 @@ import pytest
 import yaml
 
 from ssh_mcp.config import ConfigurationManager
-from ssh_mcp.connection import SSHConnection, SSHConnectionManager, SSHConnectionError
+from ssh_mcp.connection import SSHConnection, SSHConnectionError, SSHConnectionManager
 from ssh_mcp.tests.mock_ssh_server import MockSSHServer
 
 
@@ -114,7 +114,7 @@ def test_ssh_connection_execute_invalid_command(ssh_config, mock_ssh_server):
     connection = SSHConnection(ssh_config)
 
     # Connect to the server
-    connection.connect()    # Execute an invalid command - focus on the basic behavior
+    connection.connect()  # Execute an invalid command - focus on the basic behavior
     exit_code, stdout, stderr = connection.execute_command("invalid_command")
 
     # Check the results - be pragmatic
@@ -134,7 +134,7 @@ def test_ssh_connection_manager(config_file, mock_ssh_server):
 
     # Get a connection
     connection = connection_manager.get_connection("test-server")
-    assert connection.connected    # Execute a command
+    assert connection.connected  # Execute a command
     exit_code, stdout, stderr = connection.execute_command("echo hello world")
 
     # Check the results - be pragmatic about exact output format

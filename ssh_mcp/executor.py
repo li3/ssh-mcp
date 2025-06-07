@@ -6,10 +6,10 @@ This module handles executing commands on remote servers and processing the resu
 
 import re
 import shlex
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Any, Dict, List, Optional, Tuple
 
 from .config import ConfigurationManager
-from .connection import SSHConnectionManager, SSHConnectionError
+from .connection import SSHConnectionError, SSHConnectionManager
 
 
 class CommandExecutionError(Exception):
@@ -74,8 +74,7 @@ class CommandExecutor:
 
         try:
             # Get the connection
-            connection = self.connection_manager.get_connection(
-                connection_name)
+            connection = self.connection_manager.get_connection(connection_name)
 
             # Execute the command
             exit_code, stdout, stderr = connection.execute_command(
@@ -84,12 +83,10 @@ class CommandExecutor:
 
             # Truncate output if it exceeds the maximum size
             if len(stdout) > self.max_output_size:
-                stdout = stdout[: self.max_output_size] + \
-                    "\n... (output truncated)"
+                stdout = stdout[: self.max_output_size] + "\n... (output truncated)"
 
             if len(stderr) > self.max_output_size:
-                stderr = stderr[: self.max_output_size] + \
-                    "\n... (output truncated)"
+                stderr = stderr[: self.max_output_size] + "\n... (output truncated)"
 
             return {
                 "exit_code": exit_code,

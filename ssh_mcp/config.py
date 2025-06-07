@@ -7,7 +7,7 @@ This module handles loading and validating configuration from ~/.ssh-mcp-config.
 import os
 import re
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import Any, Dict, List, Optional
 
 import yaml
 
@@ -209,7 +209,7 @@ class ConfigurationManager:
         Get the maximum output size.
 
         Returns:
-            Maximum output size in bytes.        """
+            Maximum output size in bytes."""
         return self.config.get("defaults", {}).get(
             "max_output_size", 1048576
         )  # Default 1MB
@@ -226,7 +226,7 @@ class ConfigurationManager:
     def reload_config(self) -> None:
         """
         Reload the configuration from the config file.
-        
+
         This allows runtime updates to the configuration without restarting the server.
         """
         self.config = self._load_config()

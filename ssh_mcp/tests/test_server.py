@@ -2,18 +2,18 @@
 Tests for the SSH-MCP server module.
 """
 
+import io
 import os
 import tempfile
 import time
-from typing import Dict, List, Any
-import io
-import anyio
+from typing import Any, Dict, List
 
+import anyio
+import mcp.client.stdio
 import pytest
 import yaml
-import mcp.client.stdio
-from mcp.shared.message import SessionMessage
 from anyio.streams.memory import MemoryObjectReceiveStream, MemoryObjectSendStream
+from mcp.shared.message import SessionMessage
 
 from ssh_mcp.config import ConfigurationManager
 from ssh_mcp.server import SSHMCPServer
@@ -69,8 +69,7 @@ def config_file(mock_ssh_server):
 @pytest.fixture
 def mcp_server(config_file):
     """Fixture providing an SSHMCPServer instance."""
-    server = SSHMCPServer(
-        server_name="Test SSH-MCP Server", config_path=config_file)
+    server = SSHMCPServer(server_name="Test SSH-MCP Server", config_path=config_file)
     return server
 
 
@@ -88,16 +87,20 @@ class MCPTestClient:
     def read_resource(self, uri):
         """Synchronous wrapper for read_resource."""
         import anyio
+
         return anyio.run(self.read_resource_async, uri)
 
     async def call_tool_async(self, tool_name, params):
         """Call a tool on the MCP server asynchronously."""
         if tool_name == "execute_command":
-            return await self.mcp.call_tool(tool_name, {
-                # Changed "connection_id" to "connection"
-                "connection": params["connection"],
-                "command": params["command"]
-            })
+            return await self.mcp.call_tool(
+                tool_name,
+                {
+                    # Changed "connection_id" to "connection"
+                    "connection": params["connection"],
+                    "command": params["command"],
+                },
+            )
         elif tool_name in ["list_connections", "list_allowed_commands"]:
             return await self.mcp.call_tool(tool_name, {})
         else:
@@ -106,12 +109,14 @@ class MCPTestClient:
     def call_tool(self, tool_name, params):
         """Synchronous wrapper for call_tool."""
         import anyio
+
         return anyio.run(self.call_tool_async, tool_name, params)
 
 
 @pytest.fixture
 def mcp_client(mcp_server, monkeypatch):
     """Fixture providing a test client connected to the MCP server."""
+
     # Mock the execute_command method to avoid SSH connection issues
     # Changed parameters to match CommandExecutor
     def mock_execute_command(connection_id, command):
@@ -121,7 +126,7 @@ def mcp_client(mcp_server, monkeypatch):
                 "stdout": "Hello from MCP\\n",
                 "stderr": "",
                 "success": True,
-                "error": None
+                "error": None,
             }
         elif "ls" in command:
             return {
@@ -129,7 +134,7 @@ def mcp_client(mcp_server, monkeypatch):
                 "stdout": "file1.txt\\nfile2.txt\\n",
                 "stderr": "",
                 "success": True,
-                "error": None
+                "error": None,
             }
         elif "cat nonexistent.txt" in command:
             return {
@@ -137,14 +142,14 @@ def mcp_client(mcp_server, monkeypatch):
                 "stdout": "",
                 "stderr": "cat: nonexistent.txt: No such file or directory\\n",
                 "success": False,
-                "error": "File not found"
+                "error": "File not found",
             }
         return {
             "exit_code": 0,
             "stdout": "Command output\\n",
             "stderr": "",
             "success": True,
-            "error": None
+            "error": None,
         }
 
     # Mock the connection execute_command method
@@ -161,9 +166,11 @@ def mcp_client(mcp_server, monkeypatch):
 
     # Apply mocks
     from ssh_mcp.connection import SSHConnection
+
     monkeypatch.setattr(SSHConnection, "execute_command", mock_ssh_execute)
-    monkeypatch.setattr(mcp_server.command_executor,
-                        "execute_command", mock_execute_command)
+    monkeypatch.setattr(
+        mcp_server.command_executor, "execute_command", mock_execute_command
+    )
 
     return MCPTestClient(mcp_server)
 
@@ -249,8 +256,9 @@ def test_list_connections_tool(mcp_client):
     """Test the list_connections tool."""
     # List connections
     result = mcp_client.call_tool("list_connections", {})
-    connections = [item.text for item in result if hasattr(
-        item, 'text')]  # Extract text from TextContent
+    connections = [
+        item.text for item in result if hasattr(item, "text")
+    ]  # Extract text from TextContent
 
     # Check the connections
     assert isinstance(connections, list)
@@ -261,8 +269,9 @@ def test_list_allowed_commands_tool(mcp_client):
     """Test the list_allowed_commands tool."""
     # List allowed commands
     result = mcp_client.call_tool("list_allowed_commands", {})
-    commands = [item.text for item in result if hasattr(
-        item, 'text')]  # Extract text from TextContent
+    commands = [
+        item.text for item in result if hasattr(item, "text")
+    ]  # Extract text from TextContent
 
     # Check the commands
     assert isinstance(commands, list)

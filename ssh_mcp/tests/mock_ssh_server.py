@@ -3,11 +3,12 @@ Mock SSH server for testing SSH-MCP.
 
 This module provides a mock SSH server for testing SSH connections without a real SSH server.
 """
+
 import os
 import socket
 import threading
 import time
-from typing import Dict, List, Optional, Tuple, Any, Callable
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import paramiko
 
@@ -26,7 +27,7 @@ class MockSSHServer:
         port: int = 0,  # 0 means pick an available port
         username: str = "testuser",
         password: Optional[str] = "testpass",
-        key_path: Optional[str] = None
+        key_path: Optional[str] = None,
     ):
         """
         Initialize the mock SSH server.
@@ -75,10 +76,8 @@ class MockSSHServer:
 
         try:
             # Create a socket
-            self.server_socket = socket.socket(
-                socket.AF_INET, socket.SOCK_STREAM)
-            self.server_socket.setsockopt(
-                socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.server_socket.bind((self.host, self.port))
             self.server_socket.listen(5)
 
@@ -122,13 +121,11 @@ class MockSSHServer:
             while self.running:
                 try:
                     client_socket, client_address = self.server_socket.accept()
-                    print(
-                        f"Connection from {client_address[0]}:{client_address[1]}")
+                    print(f"Connection from {client_address[0]}:{client_address[1]}")
 
                     # Handle the connection in a new thread
                     client_thread = threading.Thread(
-                        target=self._handle_client,
-                        args=(client_socket,)
+                        target=self._handle_client, args=(client_socket,)
                     )
                     client_thread.daemon = True
                     client_thread.start()
@@ -318,7 +315,9 @@ class MockSSHServerHandler(paramiko.ServerInterface):
         # Accept a shell request
         return True
 
-    def check_channel_exec_request(self, channel: paramiko.Channel, command: bytes) -> bool:
+    def check_channel_exec_request(
+        self, channel: paramiko.Channel, command: bytes
+    ) -> bool:
         """
         Check if an exec request is acceptable.
 
@@ -334,7 +333,7 @@ class MockSSHServerHandler(paramiko.ServerInterface):
         threading.Thread(
             target=self._handle_command,
             args=(channel, command.decode("utf-8")),
-            daemon=True
+            daemon=True,
         ).start()
         return True
 
@@ -377,7 +376,8 @@ class MockSSHServerHandler(paramiko.ServerInterface):
                 # Check if we have a handler for this command
                 if base_command in self.command_handlers:
                     exit_code, stdout, stderr = self.command_handlers[base_command](
-                        args)
+                        args
+                    )
                 else:
                     exit_code = 127
                     stdout = ""
@@ -385,9 +385,9 @@ class MockSSHServerHandler(paramiko.ServerInterface):
 
             # Send the output
             if stdout:
-                channel.send(stdout.encode('utf-8'))
+                channel.send(stdout.encode("utf-8"))
             if stderr:
-                channel.send_stderr(stderr.encode('utf-8'))
+                channel.send_stderr(stderr.encode("utf-8"))
 
             # Set the exit code and close
             channel.send_exit_status(exit_code)
@@ -397,7 +397,8 @@ class MockSSHServerHandler(paramiko.ServerInterface):
             # Handle any errors
             try:
                 channel.send_stderr(
-                    f"Error executing command: {str(e)}\n".encode('utf-8'))
+                    f"Error executing command: {str(e)}\n".encode("utf-8")
+                )
                 channel.send_exit_status(1)
                 channel.close()
             except Exception:
@@ -413,6 +414,7 @@ def main():
         print("Mock SSH server running. Press Ctrl+C to stop.")
         while True:
             import time
+
             time.sleep(1)
 
     except KeyboardInterrupt:

@@ -11,7 +11,7 @@ import yaml
 
 from ssh_mcp.config import ConfigurationManager
 from ssh_mcp.connection import SSHConnectionManager
-from ssh_mcp.executor import CommandExecutor, CommandExecutionError
+from ssh_mcp.executor import CommandExecutionError, CommandExecutor
 from ssh_mcp.tests.mock_ssh_server import MockSSHServer
 
 

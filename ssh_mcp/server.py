@@ -4,7 +4,7 @@ MCP server implementation for SSH-MCP.
 This module provides the MCP server that exposes SSH command execution capabilities to LLMs.
 """
 
-from typing import Dict, List, Optional, Any
+from typing import Any, Dict, List, Optional
 
 from mcp.server.fastmcp import FastMCP
 
